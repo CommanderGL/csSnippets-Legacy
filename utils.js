@@ -16,3 +16,6 @@ export const importUtils = {
         document.head.appendChild(tmp);
     }
 };
+export const isClass = (c) => {
+    return typeof c === "function" && Object.getOwnPropertyDescriptor(c, "prototype")?.writable === false;
+};

@@ -19,11 +19,11 @@ export class Select {
     btn;
     options_wrapper;
     #onChange = () => { };
-    multiselect = false;
+    #multiselect = false;
     constructor(options, cancel) {
         cancel.all();
         if (options.props?.multiselect)
-            this.multiselect = true;
+            this.#multiselect = true;
         this.wrapper = document.createElement("div");
         this.wrapper.classList.add("select-wrapper");
         this.btn = document.createElement("button");
@@ -42,15 +42,23 @@ export class Select {
             option_elem.classList.add("select-option");
             option_elem.addEventListener("keypress", e => {
                 if (e.code == "Enter" || e.code == "Space") {
-                    if (this.multiselect) {
+                    if (this.#multiselect) {
                         option_elem.classList.toggle("select-option-selected");
-                        if (!Array.isArray(this.selected))
-                            this.selected = [];
+                        if (!Array.isArray(this.selected)) {
+                            if (typeof this.selected == "string") {
+                                this.selected = [this.selected];
+                            }
+                            else {
+                                this.selected = [];
+                            }
+                        }
                         if (this.selected.includes(option)) {
                             this.selected = this.selected.filter(o => o !== option);
+                            this.#onChange();
                             return;
                         }
                         this.selected.push(option);
+                        this.#onChange();
                         return;
                     }
                     option_elem.classList.add("select-option-selected");
@@ -62,15 +70,23 @@ export class Select {
                 }
             });
             option_elem.addEventListener("click", () => {
-                if (this.multiselect) {
+                if (this.#multiselect) {
                     option_elem.classList.toggle("select-option-selected");
-                    if (!Array.isArray(this.selected))
-                        this.selected = [];
+                    if (!Array.isArray(this.selected)) {
+                        if (typeof this.selected == "string") {
+                            this.selected = [this.selected];
+                        }
+                        else {
+                            this.selected = [];
+                        }
+                    }
                     if (this.selected.includes(option)) {
                         this.selected = this.selected.filter(o => o !== option);
+                        this.#onChange();
                         return;
                     }
                     this.selected.push(option);
+                    this.#onChange();
                     return;
                 }
                 option_elem.classList.add("select-option-selected");
@@ -96,5 +112,27 @@ export class Select {
     }
     onChange(cb) {
         this.#onChange = cb;
+    }
+    set multiselect(v) {
+        if (!v && Array.isArray(this.selected)) {
+            this.#multiselect = false;
+            if (this.selected.length > 1) {
+                this.selected = null;
+                Array.from(this.options_wrapper.children).forEach(child => {
+                    child.classList.remove("select-option-selected");
+                });
+                return;
+            }
+            else if (this.selected.length == 1) {
+                this.selected = this.selected[0];
+            }
+            else {
+                this.selected = null;
+            }
+        }
+        this.#multiselect = v;
+    }
+    get multiselect() {
+        return this.#multiselect;
     }
 }

@@ -1,6 +1,4 @@
-const isClass = (c) => {
-    return typeof c === "function" && Object.getOwnPropertyDescriptor(c, "prototype")?.writable === false;
-};
+import { isClass } from "./utils.ts";
 export default class Scar {
     element = document.createElement("div");
     children = [];
