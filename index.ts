@@ -1,25 +1,34 @@
+export interface CancelType {
+    children: () => void,
+    props: () => void,
+    classes: () => void,
+    all: () => void
+}
+
 export interface ScarOptions {
     tag: string | any,
     root?: HTMLElement | Scar,
     props?: Object,
     children?: Scar[] | ScarOptions[],
     text?: any
-    html?: any
+    html?: any,
+    classes?: string[]
 }
 
-export interface CancelType {
-    children: () => void,
-    props: () => void
+const isClass = (c: any) => {
+    return typeof c === "function" && Object.getOwnPropertyDescriptor(c, "prototype")?.writable === false;
 }
 
 export default class Scar {
     element: HTMLElement = document.createElement("div");
     children: Scar[] = [];
     #root: HTMLElement = document.body;
+    component: any;
 
     constructor(options: ScarOptions) {
         let cancelChildren = false;
         let cancelProps = false;
+        let cancelClasses = false;
 
         if (options.root != null) {
             if (options.root instanceof Scar) {
@@ -32,11 +41,31 @@ export default class Scar {
         }
 
         if (typeof options.tag == "function") {
-            this.element = options.tag(options, <CancelType>{
-                children: () => { cancelChildren = true },
-                props: () => { cancelProps = true }
-            });
-            this.#root.appendChild(this.element);
+            if (isClass(options.tag)) {
+                this.component = new options.tag(options, <CancelType>{
+                    children: () => { cancelChildren = true },
+                    props: () => { cancelProps = true },
+                    classes: () => { cancelClasses = true },
+                    all: () => {
+                        cancelChildren = true;
+                        cancelProps = true;
+                        cancelClasses = true;
+                    }
+                });
+            } else {
+                this.component = options.tag(options, <CancelType>{
+                    children: () => { cancelChildren = true },
+                    props: () => { cancelProps = true },
+                    classes: () => { cancelClasses = true },
+                    all: () => {
+                        cancelChildren = true;
+                        cancelProps = true;
+                        cancelClasses = true;
+                    }
+                });
+            }
+
+            this.element = this.component.element;
         } else {
             this.element = document.createElement(options.tag);
         }
@@ -54,6 +83,12 @@ export default class Scar {
         if (options.text != null && !(typeof options.tag == "function")) this.text = options.text;
 
         if (options.html != null && !(typeof options.tag == "function")) this.html = options.html;
+
+        if (options.classes != null && !cancelClasses) {
+            options.classes.forEach(className => {
+                this.element.classList.add(className);
+            });
+        }
 
         this.#root.appendChild(this.element);
     }
