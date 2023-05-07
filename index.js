@@ -1,10 +1,15 @@
+const isClass = (c) => {
+    return typeof c === "function" && Object.getOwnPropertyDescriptor(c, "prototype")?.writable === false;
+};
 export default class Scar {
     element = document.createElement("div");
     children = [];
     #root = document.body;
+    component;
     constructor(options) {
         let cancelChildren = false;
         let cancelProps = false;
+        let cancelClasses = false;
         if (options.root != null) {
             if (options.root instanceof Scar) {
                 this.#root = options.root.element;
@@ -17,11 +22,31 @@ export default class Scar {
             console.warn("You did not provide a root element for your Scar! Will be using body (may conflict with extensions.) -> " + options.tag);
         }
         if (typeof options.tag == "function") {
-            this.element = options.tag(options, {
-                children: () => { cancelChildren = true; },
-                props: () => { cancelProps = true; }
-            });
-            this.#root.appendChild(this.element);
+            if (isClass(options.tag)) {
+                this.component = new options.tag(options, {
+                    children: () => { cancelChildren = true; },
+                    props: () => { cancelProps = true; },
+                    classes: () => { cancelClasses = true; },
+                    all: () => {
+                        cancelChildren = true;
+                        cancelProps = true;
+                        cancelClasses = true;
+                    }
+                });
+            }
+            else {
+                this.component = options.tag(options, {
+                    children: () => { cancelChildren = true; },
+                    props: () => { cancelProps = true; },
+                    classes: () => { cancelClasses = true; },
+                    all: () => {
+                        cancelChildren = true;
+                        cancelProps = true;
+                        cancelClasses = true;
+                    }
+                });
+            }
+            this.element = this.component.element;
         }
         else {
             this.element = document.createElement(options.tag);
@@ -38,6 +63,11 @@ export default class Scar {
             this.text = options.text;
         if (options.html != null && !(typeof options.tag == "function"))
             this.html = options.html;
+        if (options.classes != null && !cancelClasses) {
+            options.classes.forEach(className => {
+                this.element.classList.add(className);
+            });
+        }
         this.#root.appendChild(this.element);
     }
     get root() {
