@@ -1,0 +1,19 @@
+{
+  "name": "cssnippets",
+  "version": "1.0.1",
+  "description": "Simple JSON based web framework.",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "ts": "npx tsc ./index.ts"
+  },
+  "keywords": [],
+  "author": "CrossScar",
+  "license": "",
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  }
+}
