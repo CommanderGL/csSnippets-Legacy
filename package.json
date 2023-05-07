@@ -1,6 +1,6 @@
 {
   "name": "cssnippets",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple JSON based web framework.",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,7 @@
   "scripts": {
     "ts": "npx tsc ./index.ts"
   },
-  "keywords": [],
+  "keywords": ["front-end", "framework", "web", "typescript"],
   "author": "CrossScar",
   "license": "",
   "devDependencies": {
