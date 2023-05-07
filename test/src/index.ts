@@ -22,6 +22,12 @@ autoChangeWrapper.element.style.flexDirection = "row";
 const autoChange = new Scar({ tag: "input", root: autoChangeWrapper, props: { type: "checkbox" } });
 new Scar({ tag: "h3", root: autoChangeWrapper, text: "Auto Change" });
 
+const multiselectWrapper = new Scar({ tag: "div", root: app });
+multiselectWrapper.element.style.display = "flex";
+multiselectWrapper.element.style.flexDirection = "row";
+const multiselectElem = new Scar({ tag: "input", root: multiselectWrapper, props: { type: "checkbox" } });
+new Scar({ tag: "h3", root: multiselectWrapper, text: "Multiselect" });
+
 const moveBtn = new Scar({ tag: "button", root: app, text: "Swap" });
 const setBtn = new Scar({ tag: "button", root: app, text: "Set" });
 
@@ -61,6 +67,10 @@ select.component.onChange(() => {
     
         txt.text = select.component.selected;
     }
+});
+
+multiselectElem.addEvent("click", () => {
+    select.component.multiselect = (<HTMLInputElement>multiselectElem.element).checked;
 });
 
 

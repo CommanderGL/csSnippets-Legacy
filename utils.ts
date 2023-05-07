@@ -20,3 +20,7 @@ export const importUtils = {
         document.head.appendChild(tmp);
     }
 }
+
+export const isClass = (c: any) => {
+    return typeof c === "function" && Object.getOwnPropertyDescriptor(c, "prototype")?.writable === false;
+}

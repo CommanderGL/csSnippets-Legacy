@@ -1,3 +1,5 @@
+import { isClass } from "./utils.ts";
+
 export interface CancelType {
     children: () => void,
     props: () => void,
@@ -13,10 +15,6 @@ export interface ScarOptions {
     text?: any
     html?: any,
     classes?: string[]
-}
-
-const isClass = (c: any) => {
-    return typeof c === "function" && Object.getOwnPropertyDescriptor(c, "prototype")?.writable === false;
 }
 
 export default class Scar {
