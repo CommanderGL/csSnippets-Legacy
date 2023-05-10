@@ -2,9 +2,12 @@ import Scar, { ScarOptions, CancelType } from './index.ts';
 
 interface LinkOptions extends ScarOptions {
     props?: {
-        url: string,
+        url?: string,
         newtab?: boolean
     }
+    
+    url?: string,
+    newtab?: boolean
 }
 
 export function Link(options: LinkOptions, cancel: CancelType) {
@@ -24,9 +27,12 @@ export function Link(options: LinkOptions, cancel: CancelType) {
 
 interface SelectOptions extends ScarOptions {
     props?: {
-        options: string[],
+        options?: string[],
         multiselect?: boolean
     }
+    
+    options?: string[],
+    multiselect?: boolean
 }
 
 export class Select {
@@ -41,6 +47,8 @@ export class Select {
 
     constructor(options: SelectOptions, cancel: CancelType) {
         cancel.all();
+        
+        if (options.props?.options == null) throw "You MUST define props.options on Select!";
 
         if (options.props?.multiselect) this.#multiselect = true;
 
