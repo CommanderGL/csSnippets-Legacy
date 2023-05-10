@@ -1,4 +1,6 @@
 node_modules/
 test/
+plugins/
 .gitignore
 logo.svg
+.git/
