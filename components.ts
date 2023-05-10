@@ -7,7 +7,9 @@ interface LinkOptions extends ScarOptions {
     }
     
     url?: string,
-    newtab?: boolean
+    newtab?: boolean,
+    
+    tag?: string | ((options: ScarOptions) => HTMLElement) | any
 }
 
 export function Link(options: LinkOptions, cancel: CancelType) {
@@ -33,6 +35,8 @@ interface SelectOptions extends ScarOptions {
     
     options?: string[],
     multiselect?: boolean
+    
+    tag?: string | ((options: ScarOptions) => HTMLElement) | any
 }
 
 export class Select {
